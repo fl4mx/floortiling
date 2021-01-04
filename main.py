@@ -93,23 +93,34 @@ def plotter(arrangeDict, category_names):
     data = numpy.array(list(arrangeDict.values()))
     data_cum = data.cumsum(axis=1)
     category_colors = plt.get_cmap("RdYlGn")(numpy.linspace(0.15, 0.85, data.shape[1]))
-    fig, ax = plt.subplots(figsize=(9.6, 5))
+    fig, ax = plt.subplots(figsize=(6, 8))
+    #fig, ax = plt.subplots()
     ax.invert_yaxis()
     ax.xaxis.set_visible(False)
     ax.set_xlim(0, numpy.sum(data, axis = 1).max())
+    print(data)
+    y_pos = 40 * numpy.arange(len(labels))
+    print(y_pos)
     for i, (colname, color) in enumerate(zip(category_names, category_colors)):
         widths = data[:, i]
+        print("widths")
+        print(widths)
         starts = data_cum[:, i] - widths
-        ax.barh(labels, widths, left = starts, height = 0.7, label = colname, color = color)
-        xcenters = starts + widths / 2
+        print("starts")
+        print(starts)
+        ax.barh(y_pos, widths, left = starts, height = 40, label = colname, color = color)
+        xcenters = starts + (widths / 2)
         r, g, b, _ = color
         text_color = 'white' if r * g * b < 0.2 else 'darkgrey'
         for y, (x, c) in enumerate(zip(xcenters, widths)):
-            ax.text(x, y, str(int(c)), ha = "center", va = "center", color = text_color)
+            ax.text(x, y_pos[y], str(int(c)), ha = "center", va = "center", color = text_color)
     ax.legend(ncol = len(category_names), bbox_to_anchor = (0, 1.035), loc = "center left", fontsize = "small")
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(labels)
     fig.suptitle("Floorboard Arrangement", fontsize = 20, fontweight = "bold")
-    ax.text(0.94, 1.06, ("Wastage = " + str(wastage)), verticalalignment = "bottom", horizontalalignment = "center", transform = ax.transAxes, color = 'green', fontsize = 8)
-    ax.text(0.94, 1.03, ("Minimum Gap = " + str(minimumgap)), verticalalignment = "bottom", horizontalalignment = "center", transform = ax.transAxes, color = 'green', fontsize = 8)
+    ax.text(0.98, 1.06, ("Wastage = " + str(wastage)), verticalalignment = "bottom", horizontalalignment = "center", transform = ax.transAxes, color = 'green', fontsize = 8)
+    ax.text(0.98, 1.03, ("Minimum Gap = " + str(minimumgap)), verticalalignment = "bottom", horizontalalignment = "center", transform = ax.transAxes, color = 'green', fontsize = 8)
+    print(labels)
     return fig, ax
 
 #plot
